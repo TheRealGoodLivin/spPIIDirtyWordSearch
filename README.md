@@ -25,4 +25,4 @@ SOFTWARE.
 A PowerShell Script designed to use common word to search SharePoint Online within Document Libraries.
 
 ## How To Use
-Within the Script, find the Varible $sitePath = "" and place your site collection link in this location.
+Within the Script, find the Varible $sitePath = "" and place your site collection link in this location. Let the script run until its completed, and it will print a CVS file to the users desktop.
