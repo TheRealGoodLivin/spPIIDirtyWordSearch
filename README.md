@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-# spPIIDirtyWordSearch
+# spPIISearch
 A PowerShell Script designed to use common word to search SharePoint Online within Document Libraries.
 
 ## How To Use
