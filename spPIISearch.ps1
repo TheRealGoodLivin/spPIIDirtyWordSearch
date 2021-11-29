@@ -31,6 +31,8 @@ Connect-PnPOnline -Url $sitePath -UseWebLogin # CONNECT TO SPO
 $subSites = Get-PnPSubWeb -Recurse # GET ALL SUBSITES
 $getDocLibs = Get-PnPList | Where-Object {$_.BaseTemplate -eq 101}
 
+Write-Host "Searching: $($sitePath)" -ForegroundColor Green
+
 # GET PARENT DOCUMENT LIBRARIES
 foreach ($DocLib in $getDocLibs) {
     $allItems = Get-PnPListItem -List $DocLib -Fields "FileRef", "File_x0020_Type", "FileLeafRef", "File_x0020_Size"
@@ -38,8 +40,10 @@ foreach ($DocLib in $getDocLibs) {
     #LOOP THROUGH EACH DOCMENT IN THE PARENT SITES
     foreach ($Item in $allItems) {
         foreach ($word in $dirtyWords) {
-            if (($Item["FileLeafRef"] -like $word)) {
-                Write-Host "File found. Under:" $word "Path:" $Item["FileRef"] -ForegroundColor Red
+            $wordSearch = "(?i)\b$($word)\b"
+
+            if (($Item["FileLeafRef"] -match $wordSearch)) {
+                Write-Host "File found. " -ForegroundColor Red -nonewline; Write-Host "Under: '$($word)' Path: $($Item["FileRef"])" -ForegroundColor Yellow;
 
                 $permissions = @()
                 $perm = Get-PnPProperty -ClientObject $Item -Property RoleAssignments       
@@ -47,7 +51,7 @@ foreach ($DocLib in $getDocLibs) {
                     $loginName = Get-PnPProperty -ClientObject $role.Member -Property LoginName
                     $rolebindings = Get-PnPProperty -ClientObject $role -Property RoleDefinitionBindings
                     $permissions += "$($loginName) - $($rolebindings.Name)"
-                    write-host "$($loginName) - $($rolebindings.Name)" -ForegroundColor Yellow
+                    Write-Host "$($loginName) - $($rolebindings.Name)" -ForegroundColor Yellow
                 }
                 $permissions = $permissions | Out-String
            
@@ -69,14 +73,18 @@ foreach ($site in $subSites) {
     Connect-PnPOnline -Url $site.Url -UseWebLogin # CONNECT TO SPO SUBSITE
     $getSubDocLibs = Get-PnPList | Where-Object {$_.BaseTemplate -eq 101}
 
+    Write-Host "Searching: $($site.Url)" -ForegroundColor Green
+
     foreach ($subDocLib in $getSubDocLibs) {
         $allSubItems = Get-PnPListItem -List $subDocLib -Fields "FileRef", "File_x0020_Type", "FileLeafRef", "File_x0020_Size"
    
         #LOOP THROUGH EACH DOCMENT IN THE SUB SITES
         foreach ($subItem in $allSubItems) {
             foreach ($word in $dirtyWords) {
-                if (($subItem["FileLeafRef"] -like $word)) {
-                    Write-Host "File found. Under:" $word "Path:" $subItem["FileRef"] -ForegroundColor Red
+                $wordSearch = "(?i)\b$($word)\b"
+
+                if (($subItem["FileLeafRef"] -match $wordSearch)) {
+                    Write-Host "File found. " -ForegroundColor Red -nonewline; Write-Host "Under: '$($word)' Path: $($Item["FileRef"])" -ForegroundColor Yellow;
 
                     $permissions = @()
                     $perm = Get-PnPProperty -ClientObject $subItem -Property RoleAssignments       
@@ -84,7 +92,7 @@ foreach ($site in $subSites) {
                         $loginName = Get-PnPProperty -ClientObject $role.Member -Property LoginName
                         $rolebindings = Get-PnPProperty -ClientObject $role -Property RoleDefinitionBindings
                         $permissions += "$($loginName) - $($rolebindings.Name)"
-                        write-host "$($loginName) - $($rolebindings.Name)" -ForegroundColor Yellow
+                        Write-Host "$($loginName) - $($rolebindings.Name)" -ForegroundColor Yellow
                     }
                     $permissions = $permissions | Out-String
            
@@ -101,4 +109,4 @@ foreach ($site in $subSites) {
         }
     }
 }
-$results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Criteria" | Export-Csv -Path $reportPath -NoTypeInformation
+$results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Criteria" | Export-Csv -Path $reportPath -Force -NoTypeInformation
