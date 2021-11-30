@@ -28,11 +28,11 @@ A PowerShell Script designed to use common word to search SharePoint Online with
 Within the Script, find the Varible $sitePath = "" and place your site collection link in this location. Let the script run until its completed, and it will print a CVS file to the users desktop.
 
 ## Data Points
--FileName
--FileExtension
--FileSize
--Path
--Permissions
--Criteria
--Created
--Modified
+- FileName
+- FileExtension
+- FileSize
+- Path
+- Permissions
+- Criteria
+- Created
+- Modified
