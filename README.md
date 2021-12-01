@@ -27,6 +27,11 @@ A PowerShell Script designed to use common word to search SharePoint Online with
 ## How To Use
 Within the Script, find the Varible $sitePath = "" and place your site collection link in this location. Let the script run until its completed, and it will print a CVS file to the users desktop.
 
+## Special Searches
+The Script will look for specific formats for the following.
+- Phone Number = \d{3}-\d{3}-\d{4}
+- SSN = \d{3}-\d{2}-\d{4}
+
 ## Data Points
 - FileName
 - FileExtension
