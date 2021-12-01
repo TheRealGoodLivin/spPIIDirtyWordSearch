@@ -75,7 +75,7 @@ foreach ($DocLib in $getDocLibs) {
             }
         }
     }
-}
+} 
 
 if ($parentSiteOnly -eq $false) {
     # GET ALL SUB SITE DOCUMENT LIBRARIES
