@@ -1,4 +1,3 @@
-#
 #    DATE: 02 Nov 2021
 #    UPDATED: 1 Dec 2021
 #    
@@ -20,7 +19,7 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 #
-#    CHANGABLE VARIABLES
+# CHANGABLE VARIABLES
 $sitePath = "" # SITE PATH
 $parentSiteOnly = $false # SEARCH ONLY PARENT SITE AND IGNORE SUB SITES
 $reportPath = "C:\users\$env:USERNAME\Desktop\$((Get-Date).ToString("yyyyMMdd_HHmmss"))_SitePIIResults.csv" # REPORT PATH (DEFAULT IS TO DESKTOP)
@@ -37,7 +36,7 @@ Write-Host "Searching: $($sitePath)" -ForegroundColor Green
 foreach ($DocLib in $getDocLibs) {
     $allItems = Get-PnPListItem -List $DocLib -Fields "FileRef", "File_x0020_Type", "FileLeafRef", "File_x0020_Size", "Created", "Modified" 
    
-    #LOOP THROUGH EACH DOCMENT IN THE PARENT SITES
+    # LOOP THROUGH EACH DOCMENT IN THE PARENT SITES
     foreach ($Item in $allItems) {
         foreach ($word in $dirtyWords) {
             $wordSearch = "(?i)\b$($word)\b"
@@ -54,8 +53,8 @@ foreach ($DocLib in $getDocLibs) {
                     # Write-Host "$($loginName) - $($rolebindings.Name)" -ForegroundColor Yellow
                 }
                 $permissions = $permissions | Out-String
-
-		        if ($Item -eq $null) {
+		
+		if ($Item -eq $null) {
                     Write-Host "Error: 'Unable to pull file information'."
                 } else {
                     if ($Item["FileLeafRef"] -eq $null){ $Item["FileLeafRef"] = 'INFO NOT FOUND' }
@@ -87,8 +86,8 @@ foreach ($DocLib in $getDocLibs) {
     }
 }
 
+# GET ALL SUB SITE DOCUMENT LIBRARIES
 if ($parentSiteOnly -eq $false) {
-    # GET ALL SUB SITE DOCUMENT LIBRARIES
     foreach ($site in $subSites) {
         Connect-PnPOnline -Url $site.Url -UseWebLogin # CONNECT TO SPO SUBSITE
         $getSubDocLibs = Get-PnPList | Where-Object {$_.BaseTemplate -eq 101}
@@ -98,7 +97,7 @@ if ($parentSiteOnly -eq $false) {
         foreach ($subDocLib in $getSubDocLibs) {
             $allSubItems = Get-PnPListItem -List $subDocLib -Fields "FileRef", "File_x0020_Type", "FileLeafRef", "File_x0020_Size", "Created", "Modified" 
    
-            #LOOP THROUGH EACH DOCMENT IN THE SUB SITES
+            # LOOP THROUGH EACH DOCMENT IN THE SUB SITES
             foreach ($subItem in $allSubItems) {
                 foreach ($word in $dirtyWords) {
                     $wordSearch = "(?i)\b$($word)\b"
