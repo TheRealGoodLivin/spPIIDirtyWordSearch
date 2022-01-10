@@ -20,9 +20,8 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 #
-
-# CHANGABLE VARIABLES
-$sitePath = "https://usaf.dps.mil/sites/52msg/cs/" # SITE PATH
+#    CHANGABLE VARIABLES
+$sitePath = "" # SITE PATH
 $parentSiteOnly = $false # SEARCH ONLY PARENT SITE AND IGNORE SUB SITES
 $reportPath = "C:\users\$env:USERNAME\Desktop\$((Get-Date).ToString("yyyyMMdd_HHmmss"))_SitePIIResults.csv" # REPORT PATH (DEFAULT IS TO DESKTOP)
 $results = @() # RESULTS
@@ -55,27 +54,38 @@ foreach ($DocLib in $getDocLibs) {
                     # Write-Host "$($loginName) - $($rolebindings.Name)" -ForegroundColor Yellow
                 }
                 $permissions = $permissions | Out-String
-           
-                $results = New-Object PSObject -Property @{
-                    FileName = $subItem["FileLeafRef"]
-                    FileExtension = $subItem["File_x0020_Type"]
-                    FileSize = $subItem["File_x0020_Size"]
-                    Path = $subItem["FileRef"]
-                    Permissions = $permissions
-                    Criteria = $word
-                    Created = $subItem["Created"]
-                    Modified = $subItem["Modified"]
-                }
 
-                if (test-path $reportPath) {
-                    $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Criteria", "Created", "Modified" | Export-Csv -Path $reportPath -Force -NoTypeInformation -Append
+		        if ($Item -eq $null) {
+                    Write-Host "Error: 'Unable to pull file information'."
                 } else {
-                    $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Criteria", "Created", "Modified" | Export-Csv -Path $reportPath -Force -NoTypeInformation
+                    if ($Item["FileLeafRef"] -eq $null){ $Item["FileLeafRef"] = 'INFO NOT FOUND' }
+                    if ($Item["File_x0020_Type"] -eq $null){ $Item["FileLeafRef"] = 'INFO NOT FOUND' }
+                    if ($Item["File_x0020_Size"] -eq $null){ $Item["FileLeafRef"] = 'INFO NOT FOUND' }
+                    if ($Item["FileRef"] -eq $null){ $Item["FileLeafRef"] = 'INFO NOT FOUND' }
+                    if ($Item["Created"] -eq $null){ $Item["FileLeafRef"] = 'INFO NOT FOUND' }
+                    if ($Item["Modified"] -eq $null){ $Item["FileLeafRef"] = 'INFO NOT FOUND' }
+           
+                    $results = New-Object PSObject -Property @{
+                        FileName = $Item["FileLeafRef"]
+                        FileExtension = $Item["File_x0020_Type"]
+                        FileSize = $Item["File_x0020_Size"]
+                        Path = $Item["FileRef"]
+                        Permissions = $permissions
+                        Criteria = $word
+                        Created = $Item["Created"]
+                        Modified = $Item["Modified"]
+                    }
+
+                    if (test-path $reportPath) {
+                        $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Criteria", "Created", "Modified" | Export-Csv -Path $reportPath -Force -NoTypeInformation -Append
+                    } else {
+                        $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Criteria", "Created", "Modified" | Export-Csv -Path $reportPath -Force -NoTypeInformation
+                    }
                 }
             }
         }
     }
-} 
+}
 
 if ($parentSiteOnly -eq $false) {
     # GET ALL SUB SITE DOCUMENT LIBRARIES
@@ -105,22 +115,33 @@ if ($parentSiteOnly -eq $false) {
                             # Write-Host "$($loginName) - $($rolebindings.Name)" -ForegroundColor Yellow
                         }
                         $permissions = $permissions | Out-String
-           
-                        $results = New-Object PSObject -Property @{
-                            FileName = $subItem["FileLeafRef"]
-                            FileExtension = $subItem["File_x0020_Type"]
-                            FileSize = $subItem["File_x0020_Size"]
-                            Path = $subItem["FileRef"]
-                            Permissions = $permissions
-                            Criteria = $word
-                            Created = $subItem["Created"]
-                            Modified = $subItem["Modified"]
-                        }
 
-                        if (test-path $reportPath) {
-                            $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Criteria", "Created", "Modified" | Export-Csv -Path $reportPath -Force -NoTypeInformation -Append
+                        if ($subItem -eq $null) {
+                            Write-Host "Error: 'Unable to pull file information'."
                         } else {
-                            $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Criteria", "Created", "Modified" | Export-Csv -Path $reportPath -Force -NoTypeInformation
+                            if ($subItem["FileLeafRef"] -eq $null){ $subItem["FileLeafRef"] = 'NOT FOUND' }
+                            if ($subItem["File_x0020_Type"] -eq $null){ $subItem["FileLeafRef"] = 'NOT FOUND' }
+                            if ($subItem["File_x0020_Size"] -eq $null){ $subItem["FileLeafRef"] = 'NOT FOUND' }
+                            if ($subItem["FileRef"] -eq $null){ $subItem["FileLeafRef"] = 'NOT FOUND' }
+                            if ($subItem["Created"] -eq $null){ $subItem["FileLeafRef"] = 'INFO NOT FOUND' }
+                            if ($subItem["Modified"] -eq $null){ $subItem["FileLeafRef"] = 'INFO NOT FOUND' }
+           
+                            $results = New-Object PSObject -Property @{
+                                FileName = $subItem["FileLeafRef"]
+                                FileExtension = $subItem["File_x0020_Type"]
+                                FileSize = $subItem["File_x0020_Size"]
+                                Path = $subItem["FileRef"]
+                                Permissions = $permissions
+                                Criteria = $word
+                                Created = $subItem["Created"]
+                                Modified = $subItem["Modified"]
+                            }
+
+                            if (test-path $reportPath) {
+                                $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Criteria", "Created", "Modified" | Export-Csv -Path $reportPath -Force -NoTypeInformation -Append
+                            } else {
+                                $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Criteria", "Created", "Modified" | Export-Csv -Path $reportPath -Force -NoTypeInformation
+                            }
                         }
                     }
                 }
