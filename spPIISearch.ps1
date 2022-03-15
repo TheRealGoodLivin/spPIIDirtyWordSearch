@@ -27,7 +27,7 @@ $dirtyWords = @("\d{3}-\d{3}-\d{4}","\d{3}-\d{2}-\d{4}","MyFitness","CUI","UPMR"
 
 Connect-PnPOnline -Url $sitePath -UseWebLogin # CONNECT TO SPO
 $subSites = Get-PnPSubWeb -Recurse # GET ALL SUBSITES
-$getDocLibs = Get-PnPList | Where-Object {$_.BaseTemplate -eq 101}
+$getDocLibs = Get-PnPList | Where-Object { $_.BaseTemplate -eq 101 }
 
 Write-Host "Searching: $($sitePath)" -ForegroundColor Green
 
@@ -35,7 +35,7 @@ $results = @() # RESULTS
 
 # GET PARENT DOCUMENT LIBRARIES
 foreach ($DocLib in $getDocLibs) {
-    $allItems = Get-PnPListItem -List $DocLib -Fields "FileRef", "File_x0020_Type", "FileLeafRef", "File_x0020_Size", "Created", "Modified" 
+    $allItems = Get-PnPListItem -List $DocLib -Fields "FileRef", "File_x0020_Type", "FileLeafRef", "File_x0020_Size", "Created", "Modified" -PageSize 1000 | Where { $_[ "FileLeafRef"] -like "*.*" }
    
     # LOOP THROUGH EACH DOCMENT IN THE PARENT SITES
     foreach ($Item in $allItems) {
@@ -96,7 +96,7 @@ if ($parentSiteOnly -eq $false) {
         Write-Host "Searching: $($site.Url)" -ForegroundColor Green
 
         foreach ($subDocLib in $getSubDocLibs) {
-            $allSubItems = Get-PnPListItem -List $subDocLib -Fields "FileRef", "File_x0020_Type", "FileLeafRef", "File_x0020_Size", "Created", "Modified" 
+            $allSubItems = Get-PnPListItem -List $subDocLib -Fields "FileRef", "File_x0020_Type", "FileLeafRef", "File_x0020_Size", "Created", "Modified" -PageSize 1000 | Where { $_[ "FileLeafRef"] -like "*.*" }
    
             # LOOP THROUGH EACH DOCMENT IN THE SUB SITES
             foreach ($subItem in $allSubItems) {
