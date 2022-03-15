@@ -149,3 +149,5 @@ if ($parentSiteOnly -eq $false) {
         }
     }
 }
+
+Disconnect-PnPOnline
