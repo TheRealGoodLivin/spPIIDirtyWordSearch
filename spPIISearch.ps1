@@ -30,7 +30,7 @@ $getDocLibs = Get-PnPList | Where-Object { $_.BaseTemplate -eq 101 }
 
 $reportPath = "C:\users\$env:USERNAME\Desktop\$((Get-Date).ToString("yyyyMMdd_HHmmss"))_SitePIIResults.csv" # REPORT PATH (DEFAULT IS TO DESKTOP)
 $results = @() # RESULTS
-
+ 
 Write-Host "Searching: $($sitePath)" -ForegroundColor Green
 
 # GET PARENT DOCUMENT LIBRARIES
