@@ -45,40 +45,36 @@ Write-Host "Searching: $($sitePath)" -ForegroundColor Green
 
 # GET PARENT DOCUMENT LIBRARIES
 foreach ($DocLib in $getDocLibs) {
-    $allItems = Get-PnPListItem -List $DocLib -Fields "FileRef", "File_x0020_Type", "FileLeafRef", "File_x0020_Size", "Created", "Modified" -PageSize 1000 | Where { $_[ "FileLeafRef"] -like "*.*" }
-   
-    # LOOP THROUGH EACH DOCMENT IN THE PARENT SITES
-    foreach ($Item in $allItems) {
+    Get-PnPListItem -List $DocLib -Fields "FileRef", "File_x0020_Type", "FileLeafRef", "File_x0020_Size", "Created", "Modified" -PageSize 1000 | Where { $_["FileLeafRef"] -like "*.*" } | Foreach-Object {
         foreach ($word in $dirtyWords) {
             $wordSearch = "(?i)\b$($word)\b"
 
-            if (($Item["FileLeafRef"] -match $wordSearch)) {
-                Write-Host "File found. " -ForegroundColor Red -nonewline; Write-Host "Under: '$($word)' Path: $($Item["FileRef"])" -ForegroundColor Yellow;
+            if (($_["FileLeafRef"] -match $wordSearch)) {
+                Write-Host "File found. " -ForegroundColor Red -nonewline; Write-Host "Under: '$($word)' Path: $($_["FileRef"])" -ForegroundColor Yellow;
 
                 $permissions = @()
-                $perm = Get-PnPProperty -ClientObject $Item -Property RoleAssignments       
-                foreach ($role in $Item.RoleAssignments) {
+                $perm = Get-PnPProperty -ClientObject $_ -Property RoleAssignments       
+                foreach ($role in $_.RoleAssignments) {
                     $loginName = Get-PnPProperty -ClientObject $role.Member -Property LoginName
                     $rolebindings = Get-PnPProperty -ClientObject $role -Property RoleDefinitionBindings
                     $permissions += "$($loginName) - $($rolebindings.Name)"
-                    # Write-Host "$($loginName) - $($rolebindings.Name)" -ForegroundColor Yellow
                 }
                 $permissions = $permissions | Out-String
-		
-		        if ($Item -eq $null) {
+
+                if ($_ -eq $null) {
                     Write-Host "Error: 'Unable to pull file information'."
                 } else {
-                    $size = Format-FileSize($Item["File_x0020_Size"])
+                    $size = Format-FileSize($_["File_x0020_Size"])
                                
                     $results = New-Object PSObject -Property @{
-                        FileName = $Item["FileLeafRef"]
-                        FileExtension = $Item["File_x0020_Type"]
+                        FileName = $_["FileLeafRef"]
+                        FileExtension = $_["File_x0020_Type"]
                         FileSize = $size
-                        Path = $Item["FileRef"]
+                        Path = $_["FileRef"]
                         Permissions = $permissions
                         Criteria = $word
-                        Created = $Item["Created"]
-                        Modified = $Item["Modified"]
+                        Created = $_["Created"]
+                        Modified = $_["Modified"]
                     }
 
                     if (test-path $reportPath) {
@@ -101,19 +97,16 @@ if ($parentSiteOnly -eq $false) {
         Write-Host "Searching: $($site.Url)" -ForegroundColor Green
 
         foreach ($subDocLib in $getSubDocLibs) {
-            $allSubItems = Get-PnPListItem -List $subDocLib -Fields "FileRef", "File_x0020_Type", "FileLeafRef", "File_x0020_Size", "Created", "Modified" -PageSize 1000 | Where { $_[ "FileLeafRef"] -like "*.*" }
-   
-            # LOOP THROUGH EACH DOCMENT IN THE SUB SITES
-            foreach ($subItem in $allSubItems) {
+            Get-PnPListItem -List $subDocLib -Fields "FileRef", "File_x0020_Type", "FileLeafRef", "File_x0020_Size", "Created", "Modified" -PageSize 1000 | Where { $_["FileLeafRef"] -like "*.*" } | Foreach-Object {
                 foreach ($word in $dirtyWords) {
                     $wordSearch = "(?i)\b$($word)\b"
 
-                    if (($subItem["FileLeafRef"] -match $wordSearch)) {
-                        Write-Host "File found. " -ForegroundColor Red -nonewline; Write-Host "Under: '$($word)' Path: $($subItem["FileRef"])" -ForegroundColor Yellow;
+                    if (($_["FileLeafRef"] -match $wordSearch)) {
+                        Write-Host "File found. " -ForegroundColor Red -nonewline; Write-Host "Under: '$($word)' Path: $($_["FileRef"])" -ForegroundColor Yellow;
 
                         $permissions = @()
-                        $perm = Get-PnPProperty -ClientObject $subItem -Property RoleAssignments       
-                        foreach ($role in $subItem.RoleAssignments) {
+                        $perm = Get-PnPProperty -ClientObject $_ -Property RoleAssignments       
+                        foreach ($role in $_.RoleAssignments) {
                             $loginName = Get-PnPProperty -ClientObject $role.Member -Property LoginName
                             $rolebindings = Get-PnPProperty -ClientObject $role -Property RoleDefinitionBindings
                             $permissions += "$($loginName) - $($rolebindings.Name)"
@@ -121,20 +114,20 @@ if ($parentSiteOnly -eq $false) {
                         }
                         $permissions = $permissions | Out-String
 
-                        if ($subItem -eq $null) {
+                        if ($_ -eq $null) {
                             Write-Host "Error: 'Unable to pull file information'."
                         } else {
-                            $size = Format-FileSize($subItem["File_x0020_Size"])
+                            $size = Format-FileSize($_["File_x0020_Size"])
            
                             $results = New-Object PSObject -Property @{
-                                FileName = $subItem["FileLeafRef"]
-                                FileExtension = $subItem["File_x0020_Type"]
+                                FileName = $_["FileLeafRef"]
+                                FileExtension = $_["File_x0020_Type"]
                                 FileSize = $size
-                                Path = $subItem["FileRef"]
+                                Path = $_["FileRef"]
                                 Permissions = $permissions
                                 Criteria = $word
-                                Created = $subItem["Created"]
-                                Modified = $subItem["Modified"]
+                                Created = $_["Created"]
+                                Modified = $_["Modified"]
                             }
 
                             if (test-path $reportPath) {
