@@ -24,7 +24,7 @@ SOFTWARE.
 # spPIISearch
 A PowerShell Script designed to use common words to search SharePoint Online Document Libraries.
 
-## Install PnP PowerShell.
+## Install PnP PowerShell
 1.	Open “Windows PowerShell ISE”. You can type this in the windows search bar to find the exact program.
 
 2.	Run the following command: Install-Module -Name PnP.PowerShell -Scope CurrentUser
