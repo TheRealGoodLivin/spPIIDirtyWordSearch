@@ -31,15 +31,15 @@ A PowerShell Script designed to use common words to search SharePoint Online Doc
 
 3.	When prompted: "NuGet provider is required to continue PowerShell Get requires NuGet provider version '2.8.5.201' or newer to interact with NuGet-based repositories. The NuGet provider must be available in 'C:\Program Files\PackageManagement\ProviderAssemblies' or 'C:\Users\EDIPI\AppData\Local\PackageManagement\ProviderAssemblies'. You can also install the NuGet provider by running 'Install-PackageProvider –Name NuGet –Minimum Version 2.8.5.201 -Force'. Do you want PowerShell Get to install and import the NuGet provider now?
 
-[Y] Yes [N] No [S] Suspend [?] Help (default is "Y"):" 
+    [Y] Yes [N] No [S] Suspend [?] Help (default is "Y"):" 
 
-Select Yes (Y).
+    Select Yes (Y).
 
 4.	When prompted: "Untrusted repository you are installing the modules from an untrusted repository. If you trust this repository, change its InstallationPolicy value by running the Set-PSRepository cmdlet. Are you sure you want to install the modules from 'PSGallery'?
 
-[Y] Yes [A] Yes to All [N] No [L] No to All [S] Suspend [?] Help (default is "N"):" 
+    [Y] Yes [A] Yes to All [N] No [L] No to All [S] Suspend [?] Help (default is "N"):" 
 
-Select Yes to All (A).
+    Select Yes to All (A).
 
 5.	Verify Installation of PnP PowerShell 1.8.0 or higher: Get-Module PnP.PowerShell* -ListAvailable | Select-Object Name,Version | Sort-Object Version –Descending
 
