@@ -1,5 +1,4 @@
-# LICENSE
-MIT License
+# MIT License
 
 Copyright (c) 2021 Austin L
 
